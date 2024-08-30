@@ -1,0 +1,5 @@
+# kibana.yml
+
+elasticsearch.hosts: ["https://elasticsearch:9200"]
+elasticsearch.username: "kibana_system"
+elasticsearch.password: "kibana_password"
