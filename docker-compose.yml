@@ -55,26 +55,16 @@ services:
     image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
     container_name: kibana
     environment:
-      ELASTICSEARCH_HOSTS: https://elasticsearch:9200 # connect to elasticsearch
-      ELASTICSEARCH_URL: https://elasticsearch:9200 # use in old version
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:?error} 
-      KIBANA_USERNAME: kibana_system 
-      KIBANA_PASSWORD: ${KIBANA_PASSWORD:?error} 
-      ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES: /usr/share/kibana/config/certs/root-ca.pem
-      SERVER_SSL_ENABLED: true
-      SERVER_SSL_CERTIFICATE: /usr/share/kibana/config/certs/kibana.pem
-      SERVER_SSL_KEY: /usr/share/kibana/config/certs/kibana-key.pem
-      ELASTICSEARCH_SSL_VERIFICATIONMODE=certificate
-      # xpack.security.http.ssl.enabled: "false"
-      # xpack.license.self_generated.type: trial
-      # ELASTICSEARCH_USERNAME: elastic 
-      # SERVER_PUBLICBASEURL: http://localhost:5602
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_PASSWORD}
+      KIBANA_ENCRYPTION_KEY: ${KIBANA_ENCRYPTION_KEY}
     mem_limit: ${MEM_LIMIT}
     ports:
       - 5601:5601
     volumes:
       - ./certs:/usr/share/kibana/config/certs
       - ./setup/init-kibana.sh:/usr/share/kibana/init-kibana.sh
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
     entrypoint: ["/usr/share/kibana/init-kibana.sh"]
     # networks:
     #   - elastic
