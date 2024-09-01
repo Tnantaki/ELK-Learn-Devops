@@ -43,7 +43,7 @@ services:
     ports:
       - 5044:5044
     networks:
-      # - backend
+      - backend
       - elastic
     depends_on:
       - elasticsearch

@@ -8,10 +8,11 @@ do
 done
 
 echo "Setting kibana_system password";
+
 curl -u elastic:$ELASTIC_PASSWORD -X POST \
   -s --cacert config/certs/root-ca.pem \
   https://elasticsearch:9200/_security/user/kibana_system/_password \
-  -d '{"password":"'"$KIBANA_PASSWORD"'"}' \
+  -d '{"password":"'"$KIBANA_SYSTEM_PASSWORD"'"}' \
   -H 'Content-Type: application/json'
 
 # Start Kibana
