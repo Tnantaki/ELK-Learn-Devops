@@ -15,11 +15,6 @@ services:
       discovery.type: single-node # using for single node
       ES_JAVA_OPTS: -Xms512m -Xmx512m # set JVM heap size for reduce momory usage
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:?error} # define password
-      # xpack.security.enabled: true # authetication username is elastic
-      # xpack.security.http.ssl.enabled: true
-      # xpack.security.http.ssl.key: certs/elasticsearch-key.pem
-      # xpack.security.http.ssl.certificate: certs/elasticsearch.pem
-      # xpack.security.http.ssl.certificate_authorities: certs/root-ca.pem
     mem_limit: ${MEM_LIMIT}
     ports:
       - 9200:9200
@@ -29,27 +24,27 @@ services:
       - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     depends_on:
       - setup_elk
-    # networks:
-    #   - elastic
+    networks:
+      - elastic
 
   logstash:
     image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}
     container_name: logstash
     environment:
-      ELASTIC_PASSWORD:
-    # command: logstash -f /usr/share/logstash/pipeline/logstash.conf
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:?error}
     volumes:
       - ./certs:/usr/share/logstash/config/certs
       - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
       # - ./logstash/pipeline:/usr/share/logstash/pipeline
       # - ./logstash/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml
       # - ./logstash/ingest_data/:/usr/share/logstash/ingestdata/
     mem_limit: ${MEM_LIMIT}
     ports:
       - 5044:5044
-    # networks:
-    #   - elastic
-    #   - backend
+    networks:
+      # - backend
+      - elastic
     depends_on:
       - elasticsearch
 
@@ -68,8 +63,8 @@ services:
       - ./kibana/init-kibana.sh:/usr/share/kibana/init-kibana.sh
       - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
     entrypoint: ["/usr/share/kibana/init-kibana.sh"]
-    # networks:
-    #   - elastic
+    networks:
+      - elastic
     depends_on:
       - elasticsearch
 
@@ -79,8 +74,6 @@ volumes:
 #   lstdata:
 #     driver: local
 
-# networks:
-#   backend:
-#     driver: bridge
-#   elastic:
-#     driver: bridge
+networks:
+  elastic:
+    driver: bridge

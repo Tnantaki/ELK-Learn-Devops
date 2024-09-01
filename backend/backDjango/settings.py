@@ -140,25 +140,25 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'logstash': {
-#             'level': 'INFO',
-#             'class': 'logstash.TCPLogstashHandler',
-#             'host': 'localhost',  # This should match the service name in docker-compose
-#             'port': 5044,
-#             'version': 1,
-#             'message_type': 'django',
-#             'fqdn': False,
-#             'tags': ['django'],
-#         },
-#     },
-#     'loggers': {
-#         'django': {
-#             'handlers': ['logstash'],
-#             'level': 'INFO',
-#         },
-#     },
-# }
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'logstash': {
+            'level': 'INFO',
+            'class': 'logstash.TCPLogstashHandler',
+            'host': 'logstash',
+            'port': 5044,
+            'version': 1,
+            'message_type': 'django',
+            'fqdn': False,
+            'tags': ['django'],
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['logstash'],
+            'level': 'INFO',
+        },
+    },
+}
