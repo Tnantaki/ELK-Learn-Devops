@@ -3,5 +3,31 @@ services:
     build: ./backend
     image: web-django
     container_name: django
+    env_file: ".env"
     ports:
       - 3200:8000
+    # networks:
+    #   - backend
+    depends_on:
+      - database
+  
+  database:
+    image: postgres:14.13-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:?error}
+      POSTGRES_USER: ${DB_USER:?error} 
+      POSTGRES_PASSWORD: ${DB_PASS:?error}
+    ports:
+      - 3210:5432
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    # networks:
+    #   - backend
+
+# networks:
+#   backend:
+#     driver: bridge
+
+volumes:
+  pg_data:

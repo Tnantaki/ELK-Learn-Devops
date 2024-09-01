@@ -4,6 +4,7 @@ h1 {
   text-align: center;
 }
 
+
 nav {
   padding: 1rem;
   font-size: 2.5rem;
@@ -13,6 +14,10 @@ nav {
 body {
   background-color: #202020;
   color: whitesmoke;
+}
+
+table {
+  font-size: 1.5rem;
 }
 
 .form-with-validation {
