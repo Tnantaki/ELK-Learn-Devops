@@ -36,14 +36,11 @@ services:
       - ./certs:/usr/share/logstash/config/certs
       - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
       - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-      # - ./logstash/pipeline:/usr/share/logstash/pipeline
-      # - ./logstash/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml
-      # - ./logstash/ingest_data/:/usr/share/logstash/ingestdata/
     mem_limit: ${MEM_LIMIT}
     ports:
       - 5044:5044
     networks:
-      - backend
+      # - backend
       - elastic
     depends_on:
       - elasticsearch
