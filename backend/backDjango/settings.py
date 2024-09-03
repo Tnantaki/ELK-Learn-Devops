@@ -152,7 +152,7 @@ LOGGING = {
             'version': 1,
             'message_type': 'django',
             'fqdn': False,
-            'tags': ['django'],
+            'tags': ['backend'],
         },
     },
     'loggers': {

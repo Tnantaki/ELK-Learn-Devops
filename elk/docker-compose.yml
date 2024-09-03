@@ -36,6 +36,7 @@ services:
       - ./certs:/usr/share/logstash/config/certs
       - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
       - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/postgresql-42.2.29.jre7.jar:/usr/share/logstash/postgresql-42.2.29.jre7.jar
     mem_limit: ${MEM_LIMIT}
     ports:
       - 5044:5044
@@ -68,8 +69,6 @@ services:
 volumes:
   esdata:
     driver: local
-#   lstdata:
-#     driver: local
 
 networks:
   elastic:

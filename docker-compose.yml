@@ -28,11 +28,6 @@ services:
     networks:
       - backend
 
-  # elk_setup:
-  #   extends:
-  #     file: ./elk/docker-compose.yml
-  #     service: setup_elk
-
 networks:
   backend:
     driver: bridge
