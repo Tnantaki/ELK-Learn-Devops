@@ -9,6 +9,8 @@ services:
     env_file: ".env"
     ports:
       - 3200:8000
+    volumes:
+      - ./backend/myapp/:/app/myapp/
     networks:
       - backend
     depends_on:

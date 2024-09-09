@@ -12,8 +12,10 @@
         <tr>
           <th>id</th>
           <th>name</th>
-          <th>age</th>
-          <th>date</th>
+          <th>game plays</th>
+          <th>wines</th>
+          <th>losses</th>
+          <th>updated</th>
         </tr>
       </thead>
       <tbody>
@@ -21,8 +23,10 @@
         <tr>
           <td>{{person.id}}</td>
           <td>{{person.name}}</td>
-          <td>{{person.age}}</td>
-          <td>{{person.date}}</td>
+          <td>{{person.game_plays}}</td>
+          <td>{{person.wines}}</td>
+          <td>{{person.losses}}</td>
+          <td>{{person.updated|date:"D d M Y"}} {{person.updated|time:"H:i"}}</td>
         </tr>
         {% endfor %}
       </tbody>
