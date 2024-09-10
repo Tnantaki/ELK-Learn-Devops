@@ -5,10 +5,14 @@ services:
     image: setup_elk
     container_name: setup_elk
     volumes:
-      - ./certs:/certs
+      - certs:/certs
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
+    build:
+      context: ./elasticsearch
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION:?error}
+    image: elasticsearch
     container_name: elasticsearch
     environment:
       node.name: elasticsearch
@@ -20,23 +24,23 @@ services:
       - 9200:9200
     volumes:
       - esdata:/usr/share/elasticsearch/data
-      - ./certs:/usr/share/elasticsearch/config/certs
-      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - certs:/usr/share/elasticsearch/config/certs
     depends_on:
       - setup_elk
     networks:
       - elastic
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}
+    build:
+      context: ./logstash
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION:?error}
+    image: logstash
     container_name: logstash
     environment:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:?error}
     volumes:
-      - ./certs:/usr/share/logstash/config/certs
-      - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-      - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-      - ./logstash/postgresql-42.2.29.jre7.jar:/usr/share/logstash/postgresql-42.2.29.jre7.jar
+      - certs:/usr/share/logstash/config/certs
     mem_limit: ${MEM_LIMIT}
     ports:
       - 5044:5044
@@ -47,7 +51,11 @@ services:
       - elasticsearch
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
+    build:
+      context: ./kibana
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION:?error}
+    image: kibana
     container_name: kibana
     environment:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:?error} 
@@ -57,10 +65,7 @@ services:
     ports:
       - 5601:5601
     volumes:
-      - ./certs:/usr/share/kibana/config/certs
-      - ./kibana/init-kibana.sh:/usr/share/kibana/init-kibana.sh
-      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
-    entrypoint: ["/usr/share/kibana/init-kibana.sh"]
+      - certs:/usr/share/kibana/config/certs
     networks:
       - elastic
     depends_on:
@@ -68,6 +73,8 @@ services:
 
 volumes:
   esdata:
+    driver: local
+  certs:
     driver: local
 
 networks:
