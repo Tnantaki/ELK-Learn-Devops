@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
 # Wait for Elasticsearch to be available
 # -s: silent --cacert: certs, -w %{http_code}: return http code,-u: User, -k bypass SSL (for dev only), -o: output
-until [ "$(curl -s --cacert config/certs/root-ca.pem -w "%{http_code}" -u elastic:$ELASTIC_PASSWORD -k https://elasticsearch:9200 -o /dev/null)" -eq 200 ]
+until [ $(curl -s --cacert config/certs/root-ca.pem -w "%{http_code}" -u elastic:$ELASTIC_PASSWORD -k https://elasticsearch:9200 -o /dev/null) -eq 200 ]
 do
   echo "Waiting for connect to elasticsearch..."
   sleep 10
@@ -31,18 +31,28 @@ echo "Starting Kibana..."
 # Capture the PID of the Kibana process
 PID=$!
 
-# response=$(curl -s -k -o /dev/null -w "%{http_code}" -X POST \
-#   "$KIBANA_URL/api/saved_objects/_import?overwrite=true" \
-#   -H "kbn-xsrf: true" \
-#   -H "Content-Type: multipart/form-data" \
-#   -u "elastic:$ELASTIC_PASSWORD" \
-#   -F file=@visualization.ndjson)
+# Wait for Kibana to be available
+until [ $(curl -s -k -w "%{http_code}" -o /dev/null -u elastic:$ELASTIC_PASSWORD https://kibana:5601/api/status) -eq 200 ]
+do
+  echo "Waiting for Kibana server..."
+  sleep 5
+done
 
-# if [ "$response" -eq 200 ]; then
-#     echo "Visualizations imported successfully."
-# else
-#     echo "Failed to import visualizations. HTTP response code: $response"
-# fi
+# Import visualizations to Kibana
+echo "Set Kibana visualizations from visualization.ndjson..."
+
+response=$(curl -s -k -o /dev/null -w "%{http_code}" -X POST \
+  "https://kibana:5601/api/saved_objects/_import?overwrite=true" \
+  -H "kbn-xsrf: true" \
+  -H "Content-Type: multipart/form-data" \
+  -u "elastic:$ELASTIC_PASSWORD" \
+  -F file=@visualization.ndjson)
+
+if [ "$response" -eq 200 ]; then
+    echo "Visualizations imported successfully."
+else
+    echo "Failed to import visualizations. HTTP response code: $response"
+fi
 
 
 # Wait for the Kibana process to finish

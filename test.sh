@@ -31,7 +31,7 @@ else
   echo "Failed to connect Elasticsearch: HTTP response code: $response"
 fi
 
-# check response from Kibana service
+# # check response from Kibana service
 response=$(curl -s -k -w "%{http_code}" -o /dev/null -u elastic:es1234 https://localhost:5601/api/status)
 
 if [ "$response" -eq 200 ]; then

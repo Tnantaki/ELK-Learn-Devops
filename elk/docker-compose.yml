@@ -1,12 +1,4 @@
 services:
-  setup_elk:
-    build:
-      context: ./setup
-    image: setup_elk
-    container_name: setup_elk
-    volumes:
-      - certs:/certs
-
   elasticsearch:
     build:
       context: ./elasticsearch
@@ -25,8 +17,6 @@ services:
     volumes:
       - esdata:/usr/share/elasticsearch/data
       - certs:/usr/share/elasticsearch/config/certs
-    depends_on:
-      - setup_elk
     networks:
       - elastic
 
