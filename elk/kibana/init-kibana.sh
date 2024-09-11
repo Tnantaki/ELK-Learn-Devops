@@ -21,6 +21,54 @@ else
   echo "Failed set kibana_system: HTTP response code: $response"
 fi
 
+# Create an ILM Policy for retention data
+# - delete data after 30 days
+response=$(curl -s -k -o /dev/null -w "%{http_code}" -u elastic:$ELASTIC_PASSWORD \
+  -X PUT "https://elasticsearch:9200/_ilm/policy/logstash-ilm-policy" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "policy": {
+      "phases": {
+        "hot": {
+          "actions": {}
+        },
+        "delete": {
+          "min_age": "30d",
+          "actions": {
+            "delete": {}
+          }
+        }
+      }
+    }
+  }')
+
+if [ "$response" -eq 200 ]; then
+  echo "Create an ILM Policy successfully"
+else
+  echo "Failed to create an ILM: HTTP response code: $response"
+fi
+
+# Apply the ILM Policy to an Index Template
+response=$(curl -s -k -o /dev/null -w "%{http_code}" -u elastic:$ELASTIC_PASSWORD \
+  -X PUT "https://elasticsearch:9200/_index_template/backend-logs-template" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "index_patterns": ["backend-logs-*"],
+    "template": {
+      "settings": {
+        "index.lifecycle.name": "logstash-ilm-policy"
+      }
+    }
+  }')
+
+if [ "$response" -eq 200 ]; then
+  echo "Apply Policy to index successfully"
+else
+  echo "Failed to apply the ILM: HTTP response code: $response"
+fi
+
+
+# ------------------------------- KIBANA ------------------------------- #
 # Set up signal handling
 trap 'kill -TERM $PID' TERM INT
 
